@@ -1,0 +1,85 @@
+{% extends 'ProyectoPlopApp/header.html' %}
+{% load static %}
+
+
+{% block contenidoPagina %}
+<div class="container-fluid bg-dark">
+  <div class="container pe-0">
+    <div class="row">
+      <div class="col">
+        <nav class="navbar navbar-expand-lg navbar-light bg-dark">
+          <div class="container-fluid d-flex">
+            <div class="col-4">
+              <a class="navbar-brand me-2" href="{% url 'inicio' %}">
+                <img src="{{url}}" height="55" alt="MDB Logo" loading="lazy" style="margin-top: -1px;" />
+              </a>
+            </div>
+            <div class="col-8 col-md-6" id="navbarTogglerDemo02">
+              <ul class="navbar-nav me-auto  mb-lg-0">
+              </ul>
+              <p class="text-white m-0 d-block d-sm-none">Buscate en nuestras fotos</p>
+            </div>
+          </div>
+          {% if user.is_authenticated %}
+          <li>
+            <div class="dropdown">
+              <button class="btn btn-dark text-white dropdown-toggle my-1" type="button" id="dropdownMenuButton2"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                Perfil Admin
+              </button>
+              <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item" href="{% url 'panel' 'evento'  %}">Panel de Admin </a></li>
+                <li>
+                  <hr class="dropdown-divider">
+                </li>
+                <li><a class="dropdown-item" href="{% url 'logout_request' %}">Logout</a></li>
+              </ul>
+            </div>
+          </li>
+          {% endif %}
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+<section>
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-4 text-center">
+        <div class="card mt-4 bg-dark"style=" border-bottom-right-radius: 40px;border-bottom-left-radius: 40px;border-top-right-radius: 40px;">
+          <div class="card-body" >
+            <h5 class="card-title text-white">Fotos destacadas</h5>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    
+    <div class="row row-cols-2 row-cols-md-4 g-2 mt-5">
+      {% for img in images %}
+      <div class="col-custom me-md-3">
+        <div class="card bg-dark text-white sombra1 wraper">
+          <img src="{{img.images.url}}" class="img-thumbnail wraper" alt="imagenes del evento correspondiente" />
+          <div class="card-img-overlay content1">
+            <a href="{{img.images.url}}"  download="{{img.images.url}}" style="color: white;"><i class="fa-solid fa-download h1"></i></a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-4 text-center">
+        <div class="card mt-4 bg-dark"style=" border-bottom-right-radius: 40px;border-bottom-left-radius: 40px;border-top-right-radius: 40px;">
+          <div class="card-body" >
+            <h5 class="card-title text-white">Si te gustaron las fotos y queres ver mas, te dejamos el link del drive donde estan subidas todas las imagenes</h5>
+            <a href="" class="text-white">http://127.0.0.1:8000/detalle_evento/21/</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

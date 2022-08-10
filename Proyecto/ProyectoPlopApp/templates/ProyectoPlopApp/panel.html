@@ -1,0 +1,279 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Fiesta Plop, ">
+    <meta name="copyright" content="Copyright © FiestaPlop.com">
+    <meta name="robots" content="index">
+
+    <!-- links -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="{% static 'ProyectoPlopApp/css/styles.css' %}" rel="stylesheet" />
+
+    <!-- google fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+    <!-- scripts -->
+    <script src="https://kit.fontawesome.com/f28549af1d.js" crossorigin="anonymous"></script>
+
+
+    <title>Fiesta Plop</title>
+</head>
+
+<body class="bg-light">
+
+    <section class="bg-light" style="height: 100vh">
+        <div class="container mt-5">
+            {% if messages %}
+            {% for message in messages %}
+            <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+            <div class="row">
+                <div class="col mt-5">
+                    <a href="{% url 'inicio' %}" class="d-flex flecha mb-4">
+                        <i class="fa-solid fa-arrow-left h2 ms-3 text-dark"></i>
+                      </a>
+                    <div class="d-flex row justify-content-between">      
+                            <nav>
+                                <div class="nav nav-tabs mb-5" id="nav-tab" role="tablist">
+                                    <a href="{% url 'panel' 'evento' %}"
+                                        class="nav-link {% if tab == 'evento' %}active{% endif %}">Eventos</a>
+                                    <a href="{% url 'panel' 'fondo' %}"
+                                        class="nav-link {% if tab == 'fondo' %}active{% endif %} ">Fondos</a>
+                                </div>
+                            </nav>
+                        {% if tab == 'evento' %}
+                        <div class="col-12 col-md-6 mb-3 mb-md-0">
+                             <a href="{% url 'crear_evento' %}" class="btn btn-dark mb-3">Crear Nuevo Evento</a>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3 mb-md-0">
+                            <form method="Get" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="input-group">
+                                    <div class="form-outline">
+                                        <input type="search" id="buscar" name="buscar" class="form-control"
+                                            placeholder="Buscar" />
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="table-responsive-sm">
+                        <table class="table table-hover">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th scope="col">Titulo</th>
+                                    <th scope="col">Lugar</th>
+                                    <th scope="col">Fecha</th>
+                                    <th scope="col">Link de compra</th>
+                                    <th scope="col">Detalle</th>
+                                    <th scope="col">Imagenes</th>
+                                    <th scope="col">Acciones</th>
+                                </tr>
+                            </thead>
+                            {% if buscador %}
+                            {% for obj in buscador %}
+                            <tbody>
+                                <tr>
+                                    <td>{{obj.titulo}}</td>
+                                    <td>{{obj.lugar}}</td>
+                                    <td>{{obj.fecha}}</td>
+                                    <td>{{obj.link_compra}}</td>
+                                    <td>
+                                        {% if obj.detalle is False %}
+                                        <i style="color:red" class="fa-solid fa-xmark"></i>
+                                        {% else %}
+                                        <i style="color:green" class="fa-solid fa-check"></i>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if obj.imagen is null %}
+                                        <i style="color:red" class="fa-solid fa-xmark"></i>
+                                        {% else %}
+                                        <i style="color:green" class="fa-solid fa-check"></i>
+                                        <a href="{% url 'eliminar_imagen' obj.id %}" data-mdb-toggle="tooltip"
+                                        data-mdb-placement="top" title="Eliminar evento"><i style="color:red"
+                                            class="fa-solid fa-trash-can"></i></a>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <a href="" data-mdb-toggle="tooltip" data-mdb-placement="top"
+                                            title="Agregar imagenes"><i style="color:orange"
+                                                class="fa-solid fa-circle-plus"></i></a>
+                                        <a href="{% url 'editar_evento' obj.id %}"><i style="color:green"
+                                                class="fa-solid fa-pencil"></i></a>
+                                        <a href="{% url 'eliminar_evento' obj.id %}"><i style="color:red"
+                                                class="fa-solid fa-trash-can"></i></a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="m-5">
+                        {% include 'ProyectoPlopApp/paginator_buscar.html' %}
+                    </div>
+                    {% else %}
+                    {% for resultado in eventos %}
+                    <tbody>
+                        <tr>
+                            <td>{{resultado.titulo}}</td>
+                            <td>{{resultado.lugar}}</td>
+                            <td>{{resultado.fecha}}</td>
+                            <td>{{resultado.link_compra}}</td>
+                            <td>
+                                {% if resultado.detalle is False %}
+                                <i style="color:red" class="fa-solid fa-xmark"></i>
+                                {% else %}
+                                <i style="color:green" class="fa-solid fa-check"></i>
+                                <a href="{% url 'eliminar_imagen' resultado.id %}" data-mdb-toggle="tooltip"
+                                    data-mdb-placement="top" title="Eliminar evento"><i style="color:red"
+                                        class="fa-solid fa-trash-can"></i></a>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if resultado.imagen is null %}
+                                <i style="color:red" class="fa-solid fa-xmark"></i>
+                                {% else %}
+                                <i style="color:green" class="fa-solid fa-check"></i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'agregar_imagenes' resultado.id %}" data-mdb-toggle="tooltip"
+                                    data-mdb-placement="top" title="Agregar imagenes"><i style="color:orange"
+                                        class="fa-solid fa-circle-plus"></i></a>
+                                <a href="{% url 'editar_evento' resultado.id %}"><i style="color:green"
+                                        class="fa-solid fa-pencil" data-mdb-toggle="tooltip" data-mdb-placement="top"
+                                        title="Editar evento"></i></a>
+                                <a href="{% url 'eliminar_evento' resultado.id %}" data-mdb-toggle="tooltip"
+                                    data-mdb-placement="top" title="Eliminar evento"><i style="color:red"
+                                        class="fa-solid fa-trash-can"></i></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    </table>
+                </div>
+                <div class="m-5">
+                    {% include 'ProyectoPlopApp/paginator_evento.html' %}
+                </div>
+                {% endif %}
+                {% else %}
+                <div class="col-12 col-md-6 mb-3 mb-md-0">
+                    <a href="{% url 'crear_fondo' %}" class="btn btn-dark mb-3">Crear Nuevo Fondo</a>
+               </div>
+                <div class="col-12 col-md-6 mb-4">
+                    <form method="Get" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <div class="form-outline">
+                                <input type="search" id="buscar" name="buscar" class="form-control"
+                                    placeholder="Buscar" />
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="table-responsive-sm">
+                <table class="table table-hover">
+                    <thead class="table-primary">
+                        <tr>
+                            <th scope="col">Nombre</th>
+                            <th scope="col">Aprobado</th>
+                            <th scope="col">Imagen</th>
+                            <th scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    {% if buscador %}
+                    {% for obj in buscador %}
+                    <tbody>
+                        <tr>
+                            <td>{{obj.nombre}}</td>
+                            <td>
+                                {% if obj.aprobado is False %}
+                                <a href="{% url 'aprobar_fondo' obj.id %}"><i style="color:red" class="fa-solid fa-xmark"></i></a>
+                                {% else %}
+                                <i style="color:green" class="fa-solid fa-check"></i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if obj.imagen is null %}
+                                <i style="color:red" class="fa-solid fa-xmark"></i>
+                                {% else %}
+                                <i style="color:green" class="fa-solid fa-check"></i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'eliminar_fondo' obj.id %}"><i style="color:red"
+                                        class="fa-solid fa-trash-can"></i></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                </div>
+                <div class="m-5">
+                    {% include 'ProyectoPlopApp/paginator_buscar.html' %}
+                </div>
+                {% else %}
+                    {% for obj in fondos %}
+                    <tbody>
+                        <tr>
+                            <td>{{obj.nombre}}</td>
+                            <td>
+                                {% if obj.aprobado is False %}
+                                <a href="{% url 'aprobar_fondo' obj.id %}"><i style="color:red" class="fa-solid fa-xmark"></i></a>
+                                {% else %}
+                                <i style="color:green" class="fa-solid fa-check"></i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if obj.imagen is null %}
+                                <i style="color:red" class="fa-solid fa-xmark"></i>
+                                {% else %}
+                                <i style="color:green" class="fa-solid fa-check"></i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'eliminar_fondo' obj.id %}"><i style="color:red"
+                                        class="fa-solid fa-trash-can"></i></a>
+                            </td>
+                        </tr>
+                    {% endfor %} 
+                    </tbody>
+                </table>
+                </div>
+                <div class="m-5">
+                    {% include 'ProyectoPlopApp/paginator_fondo.html' %}
+                </div>
+                {% endif %}
+            {% endif %}
+            </div>
+        </div>
+
+        </div>
+    </section>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+</body>
+
+</html>
